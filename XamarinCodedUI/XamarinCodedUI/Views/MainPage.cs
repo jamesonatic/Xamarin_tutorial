@@ -59,6 +59,7 @@ namespace XamarinCodedUI
                     new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) },
                     new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }
                 },
+
                 RowDefinitions =
                 {
                     new RowDefinition { Height = new GridLength(1.0, GridUnitType.Star) },
