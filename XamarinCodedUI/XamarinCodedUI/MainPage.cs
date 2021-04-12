@@ -5,12 +5,13 @@ namespace XamarinCodedUI
 {
     public class MainPage : ContentPage
     {
-        readonly Label textLabel;
         readonly Editor noteEditor;
 
         public MainPage()
         {
             BackgroundColor = Color.PowderBlue;
+
+            BindingContext = new MainPageViewModel();
 
             var xamagonImage = new Image
             {
@@ -23,6 +24,7 @@ namespace XamarinCodedUI
                 BackgroundColor = Color.White,
                 Margin = new Thickness(10)
             };
+            noteEditor.SetBinding(Editor.TextProperty, nameof(MainPageViewModel.NoteText));
 
             var saveButton = new Button
             {
@@ -31,7 +33,7 @@ namespace XamarinCodedUI
                 BackgroundColor = Color.Green,
                 Margin = new Thickness(10)
             };
-            saveButton.Clicked += SaveButton_Clicked;
+            saveButton.SetBinding(Button.CommandProperty, nameof(MainPageViewModel.SaveNoteCommand));
 
             var deleteButton = new Button
             {
@@ -40,13 +42,13 @@ namespace XamarinCodedUI
                 BackgroundColor = Color.Red,
                 Margin = new Thickness(10)
             };
-            deleteButton.Clicked += DeleteButton_Clicked;
+            deleteButton.SetBinding(Button.CommandProperty, nameof(MainPageViewModel.EraseNotesCommand));
 
-            textLabel = new Label
+            var collectionView = new CollectionView
             {
-                FontSize = 20,
-                Margin = new Thickness(10)
+                ItemTemplate = new NotesTemplate()
             };
+            collectionView.SetBinding(CollectionView.ItemsSourceProperty, nameof(MainPageViewModel.Notes));
 
             var grid = new Grid
             {
@@ -75,21 +77,38 @@ namespace XamarinCodedUI
             grid.Children.Add(saveButton, 0, 2);
             grid.Children.Add(deleteButton, 1, 2);
 
-            grid.Children.Add(textLabel, 0, 3);
-            Grid.SetColumnSpan(textLabel, 2);
+            grid.Children.Add(collectionView,0,3);
+            Grid.SetColumnSpan(collectionView, 2);
 
             Content = grid;
         }
 
-        private void DeleteButton_Clicked(object sender, EventArgs e)
+    }
+
+
+    class NotesTemplate : DataTemplate
+    {
+        public NotesTemplate() : base(LoadTemplate)
         {
-            textLabel.Text = "";
-            noteEditor.Text = "";
+
         }
 
-        private void SaveButton_Clicked(object sender, EventArgs e)
+        static StackLayout LoadTemplate()
         {
-            textLabel.Text = noteEditor.Text;
+            var textLabel = new Label();
+            textLabel.SetBinding(Label.TextProperty, nameof(NoteModel.Text));
+
+            var frame = new Frame
+            {
+                VerticalOptions = LayoutOptions.Center,
+                Content = textLabel
+            };
+
+            return new StackLayout
+            {
+                Children = { frame },
+                Padding = new Thickness(10)
+            };
         }
     }
 }
