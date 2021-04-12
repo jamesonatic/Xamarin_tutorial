@@ -5,33 +5,38 @@ using System.ComponentModel;
 using System.Text;
 using Xamarin.Forms;
 
-namespace App1.ViewModels
+namespace App1
 {
     class MainPageViewModel: INotifyPropertyChanged
     {
 
         public MainPageViewModel()
         {
-            AllNotes = new ObservableCollection<string>();
+            Notes = new ObservableCollection<string>();
 
-            EraseCommand = new Command(() =>
+            SelectedNoteChangedCommand = new Command(async () =>
             {
-                TheNote = string.Empty;
+                var detailVM = new DetailPageViewModel(SelectedNote);
+                var detailPage = new DetailPage();
+                detailPage.BindingContext = detailVM;
+
+                await Application.Current.MainPage.Navigation.PushModalAsync(detailPage);
             });
+
+            EraseCommand = new Command(() => TheNote = string.Empty);
 
             SaveCommand = new Command(() =>
             {
-                AllNotes.Add(theNote);
+                Notes.Add(TheNote);
 
                 TheNote = string.Empty;
             });
 
         }
-
-        public ObservableCollection<string> AllNotes { get; set; }
+        
+        public ObservableCollection<string> Notes { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         private string theNote;
 
         public string TheNote
@@ -40,9 +45,7 @@ namespace App1.ViewModels
             set
             {
                 theNote = value;
-
                 var args = new PropertyChangedEventArgs(nameof(TheNote));
-
                 PropertyChanged?.Invoke(this, args);
             }
         }
@@ -50,6 +53,21 @@ namespace App1.ViewModels
         public Command SaveCommand { get; }
 
         public Command EraseCommand { get; }
-    
+        public Command SelectedNoteChangedCommand { get; }
+
+        private string selectedNote;
+
+        public string SelectedNote
+        {
+            get => selectedNote;
+            set
+            {
+                selectedNote = value;
+                var args = new PropertyChangedEventArgs(nameof(SelectedNote));
+                PropertyChanged?.Invoke(this, args);
+            }
+        }
+
+
     }
 }
