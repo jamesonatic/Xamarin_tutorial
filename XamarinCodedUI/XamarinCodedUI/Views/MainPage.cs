@@ -46,9 +46,12 @@ namespace XamarinCodedUI
 
             var collectionView = new CollectionView
             {
-                ItemTemplate = new NotesTemplate()
+                ItemTemplate = new NotesTemplate(),
+                SelectionMode = SelectionMode.Single
             };
             collectionView.SetBinding(CollectionView.ItemsSourceProperty, nameof(MainPageViewModel.Notes));
+            collectionView.SetBinding(CollectionView.SelectedItemProperty, nameof(MainPageViewModel.SelectedNote));
+            collectionView.SetBinding(CollectionView.SelectionChangedCommandProperty, nameof(MainPageViewModel.NoteSelectedCommand));
 
             var grid = new Grid
             {

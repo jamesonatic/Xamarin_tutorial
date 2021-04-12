@@ -9,7 +9,11 @@ namespace XamarinCodedUI
     {
         public App()
         {
-            MainPage = new MainPage();
+            MainPage = new NavigationPage(new MainPage())
+            {
+                BarBackgroundColor = Color.CadetBlue,
+                BarTextColor = Color.White
+            };
         }
     }
 }

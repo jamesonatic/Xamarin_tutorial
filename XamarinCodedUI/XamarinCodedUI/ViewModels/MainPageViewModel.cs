@@ -23,6 +23,21 @@ namespace XamarinCodedUI
             () => !string.IsNullOrEmpty(NoteText));
 
             EraseNotesCommand = new Command(() => Notes.Clear());
+
+            NoteSelectedCommand = new Command(async () =>
+            {
+                if (SelectedNote is null)
+                    return;
+                
+                var detailViewModel = new DetailPageViewModel
+                {
+                    NoteText = SelectedNote.Text
+                };
+
+                await Application.Current.MainPage.Navigation.PushAsync(new DetailPage(detailViewModel));
+
+                SelectedNote = null;
+            });
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -40,8 +55,20 @@ namespace XamarinCodedUI
             }
         }
 
+        NoteModel selectedNote;
+        public NoteModel SelectedNote
+        {
+            get => selectedNote;
+            set
+            {
+                selectedNote = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedNote)));
+            }
+        }
+
         public ObservableCollection<NoteModel> Notes{ get; }
 
+        public Command NoteSelectedCommand { get; }
         public Command SaveNoteCommand { get; }
         public Command EraseNotesCommand { get; }
     }
